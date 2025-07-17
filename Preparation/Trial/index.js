@@ -9,7 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 app.use(cors());
-app.unsubscribe(compression());
+app.use(compression());
 
 app.get("/", (req, res) => {
     res.sendFile(__dirname + "/index.html");
