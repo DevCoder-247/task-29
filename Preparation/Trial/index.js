@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const compression = require('compression')
 const dotenv = require('dotenv')
 const fs = require("fs");
 const path = require("path");
@@ -8,6 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 app.use(cors());
+app.unsubscribe(compression());
 
 app.get("/", (req, res) => {
     res.sendFile(__dirname + "/index.html");
@@ -52,11 +54,13 @@ app.get("/videos/:filename", (req, res) => {
 
     const contentLength = end - start + 1;
 
+// In your video streaming endpoint
     const headers = {
-        "Content-Range": `bytes ${start}-${end}/${videoSize}`,
-        "Accept-Ranges": "bytes",
-        "Content-Length": contentLength,
-        "Content-Type": "video/mp4",
+    "Content-Range": `bytes ${start}-${end}/${videoSize}`,
+    "Accept-Ranges": "bytes",
+    "Content-Length": contentLength,
+    "Content-Type": "video/mp4",
+    "Cache-Control": "public, max-age=31536000" // 1 year cache for chunks
     };
 
     res.writeHead(206, headers);
